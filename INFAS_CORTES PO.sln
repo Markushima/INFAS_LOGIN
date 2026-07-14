@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36221.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "INFAS_CORTES_PO", "INFAS_CORTES PO\INFAS_CORTES_PO.csproj", "{758AE1A6-F783-4B56-ABB6-6954F481A455}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{758AE1A6-F783-4B56-ABB6-6954F481A455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{758AE1A6-F783-4B56-ABB6-6954F481A455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{758AE1A6-F783-4B56-ABB6-6954F481A455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{758AE1A6-F783-4B56-ABB6-6954F481A455}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {29CF1A37-58E2-4C85-B12F-C2D6E85861FF}
+	EndGlobalSection
+EndGlobal

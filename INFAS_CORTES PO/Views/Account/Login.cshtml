@@ -1,0 +1,168 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Login</title>
+
+    <link rel="icon" type="image/x-icon" href="~/assets/favicon.ico" />
+
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" />
+
+    <link href="~/css/styles.css" rel="stylesheet" />
+
+</head>
+
+<body class="bg-primary">
+
+    <div class="container vh-100 d-flex justify-content-center align-items-center">
+
+        <div class="card shadow-lg border-0 rounded-4" style="max-width:500px;width:100%;">
+
+            <div class="card-body p-5">
+
+                <div class="text-center">
+
+                    <h2 class="text-uppercase text-secondary fw-bold">
+                        Login
+                    </h2>
+
+                    <div class="divider-custom">
+
+                        <div class="divider-custom-line"></div>
+
+                        <div class="divider-custom-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+
+                        <div class="divider-custom-line"></div>
+
+                    </div>
+
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                @if (TempData["Success"] != null)
+                {
+                    <div class="alert alert-success text-center">
+                        @TempData["Success"]
+                    </div>
+                }
+
+                <form asp-action="Login" method="post">
+
+                    <div class="form-floating mb-3">
+
+                        <input type="text"
+                               class="form-control"
+                               name="username"
+                               placeholder="Username" />
+
+                        <label>Username</label>
+
+                    </div>
+
+                    <div class="form-floating mb-4">
+
+                        <input type="password"
+                               class="form-control"
+                               name="password"
+                               placeholder="Password" />
+
+                        <label>Password</label>
+
+                    </div>
+
+                    <button class="btn btn-primary btn-xl w-100">
+
+                        <i class="fas fa-right-to-bracket me-2"></i>
+
+                        Login
+
+                    </button>
+                    <div class="text-center mt-4"> 
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-primary btn-lg mt-3">
+
+                            <i class="fas fa-house me-2"></i>
+                            Return to Homepage
+
+                        </a>
+
+                    </div>
+                     
+
+                </form>
+
+                <div class="text-center mt-4">
+
+                    <p>
+
+                        Don't have an account?
+
+                        <a asp-controller="Account"
+                           asp-action="Register"
+                           class="fw-bold">
+                            Register
+                        </a>
+
+                    </p>
+
+                </div>
+
+                <hr>
+
+               
+                @if (ViewBag.AlreadyLoggedIn == true)
+                {
+                    <div class="text-center">
+
+                        <i class="fas fa-circle-check fa-4x text-success mb-3"></i>
+
+                        <h3>You're already logged in!</h3>
+
+                        <p class="text-muted">
+                            Welcome back,
+                            <strong>@ViewBag.FullName</strong>.
+                        </p>
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-primary btn-lg mt-3">
+
+                            <i class="fas fa-house me-2"></i>
+                            Return to Homepage
+
+                        </a>
+
+                    </div>
+
+                    return;
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
