@@ -8,13 +8,6 @@ namespace INFAS_CORTES_PO.Controllers
     {
         public IActionResult Login()
         {
-            //if (HttpContext.Session.GetString("User") != null)
-            //{
-            //    return RedirectToAction("Index", "Home");
-            //}
-
-            //return View();
-
 
             if (HttpContext.Session.GetString("User") != null)
             {
@@ -64,29 +57,14 @@ namespace INFAS_CORTES_PO.Controllers
             return View();
         }
 
+
         [HttpPost]
-        [HttpPost]
-        public IActionResult Register(string fullname,
-                              string email,
-                              string username,
-                              string password,
-                              string confirmPassword)
+        public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            if (string.IsNullOrWhiteSpace(fullname))
+            if (string.IsNullOrEmpty(fullname) || string.IsNullOrEmpty(email) ||
+                string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ViewBag.Error = "Full Name is required.";
-                return View();
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                ViewBag.Error = "Email is required.";
-                return View();
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                ViewBag.Error = "Password is required.";
+                ViewBag.Error = "All fields are required.";
                 return View();
             }
 
@@ -102,16 +80,22 @@ namespace INFAS_CORTES_PO.Controllers
                 return View();
             }
 
-            FakeDB.Users.Add(new User
+            var newUser = new User
             {
                 FullName = fullname,
                 Email = email,
                 Username = username,
                 Password = password
-            });
+            };
 
-            TempData["Success"] = "Registration Successful!";
-            return RedirectToAction("Login");
+            FakeDB.Users.Add(newUser);
+
+            ViewBag.Success = true;
+            ViewBag.FullName = newUser.FullName;
+            ViewBag.Email = newUser.Email;
+            ViewBag.Username = newUser.Username;
+
+            return View();
         }
 
         public IActionResult Logout()
