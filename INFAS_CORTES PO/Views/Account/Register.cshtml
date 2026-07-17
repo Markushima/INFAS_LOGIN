@@ -23,45 +23,139 @@
 
     <link href="~/css/styles.css" rel="stylesheet" />
 
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+    <style>
+        <style >
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat',sans-serif;
+        }
+
+        .login-bg {
+            min-height: 100vh;
+            background: linear-gradient(135deg,#1abc9c,#15967d,#0f6b5c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right,rgba(255,255,255,.15),transparent 35%), radial-gradient(circle at bottom left,rgba(255,255,255,.12),transparent 35%);
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 580px;
+            padding: 45px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.95);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 25px 60px rgba(0,0,0,.35);
+            animation: fadeIn .8s ease;
+        }
+
+        .login-icon {
+            width: 90px;
+            height: 90px;
+            margin: auto;
+            border-radius: 50%;
+            background: #1abc9c;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            box-shadow: 0 15px 30px rgba(0,0,0,.25);
+        }
+
+        .form-control {
+            border-radius: 15px;
+            transition: .3s;
+        }
+
+            .form-control:focus {
+                border-color: #1abc9c;
+                box-shadow: 0 0 12px rgba(26,188,156,.45);
+            }
+
+        .btn-primary {
+            border-radius: 15px;
+            transition: .3s;
+            font-weight: 600;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-3px);
+            }
+
+        .btn-outline-secondary {
+            border-radius: 15px;
+            font-weight: 600;
+        }
+
+        a {
+            transition: .3s;
+        }
+
+            a:hover {
+                color: #15967d;
+            }
+
+        @@keyframes fadeIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+    </style>
 </head>
 
-<body class="bg-primary">
+<body>
 
-    <div class="container vh-100 d-flex justify-content-center align-items-center">
+    <div class="login-bg">
 
-        <div class="card shadow-lg border-0 rounded-4" style="max-width:600px;width:100%;">
+        <div class="login-overlay"></div>
 
-            <div class="card-body p-5">
+        <div class="container min-vh-100 d-flex justify-content-center align-items-center">
 
-                <div class="text-center">
+            <div class="login-card">
 
-                    <h2 class="text-uppercase text-secondary fw-bold">
+                <div class="text-center mb-4">
 
+                    <div class="login-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+
+                    <h2 class="fw-bold text-uppercase text-secondary mt-4">
                         Create Account
-
                     </h2>
 
-                    <div class="divider-custom">
-
-                        <div class="divider-custom-line"></div>
-
-                        <div class="divider-custom-icon">
-
-                            <i class="fas fa-star"></i>
-
-                        </div>
-
-                        <div class="divider-custom-line"></div>
-
-                    </div>
+                    <p class="text-muted">
+                        Come and Join Us!
+                    </p>
 
                 </div>
 
                 @if (ViewBag.Error != null)
                 {
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger text-center rounded-3">
                         @ViewBag.Error
                     </div>
                 }
@@ -71,88 +165,110 @@
                     <div class="form-floating mb-3">
 
                         <input class="form-control"
-                               name="fullname"
                                id="fullname"
+                               name="fullname"
                                placeholder="Full Name" />
 
-                        <label>Full Name</label>
+                        <label>
+                            <i class="fas fa-user me-2"></i>
+                            Full Name
+                        </label>
 
                     </div>
 
                     <div class="form-floating mb-3">
 
-                        <input class="form-control"
-                               type="email"
-                               name="email"
+                        <input type="email"
+                               class="form-control"
                                id="email"
+                               name="email"
                                placeholder="Email" />
 
-                        <label>Email</label>
+                        <label>
+                            <i class="fas fa-envelope me-2"></i>
+                            Email
+                        </label>
 
                     </div>
 
                     <div class="form-floating mb-3">
 
                         <input class="form-control"
-                               name="username"
                                id="username"
+                               name="username"
                                placeholder="Username" />
 
-                        <label>Username</label>
+                        <label>
+                            <i class="fas fa-user-circle me-2"></i>
+                            Username
+                        </label>
 
                     </div>
 
                     <div class="form-floating mb-3">
 
-                        <input class="form-control"
-                               type="password"
-                               name="password"
+                        <input type="password"
+                               class="form-control"
                                id="password"
+                               name="password"
                                placeholder="Password" />
 
-                        <label>Password</label>
+                        <label>
+                            <i class="fas fa-lock me-2"></i>
+                            Password
+                        </label>
 
                     </div>
 
                     <div class="form-floating mb-4">
 
-                        <input class="form-control"
-                               type="password"
-                               name="confirmPassword"
+                        <input type="password"
+                               class="form-control"
                                id="confirmPassword"
+                               name="confirmPassword"
                                placeholder="Confirm Password" />
 
-                        <label>Confirm Password</label>
+                        <label>
+                            <i class="fas fa-shield-halved me-2"></i>
+                            Confirm Password
+                        </label>
 
                     </div>
 
-                    <button type="submit" id="register" class="btn btn-primary btn-xl w-100">
+                    <button type="submit"
+                            id="register"
+                            class="btn btn-primary w-100 py-3 fw-bold shadow">
 
                         <i class="fas fa-user-plus me-2"></i>
 
-                        Register
+                        Create Account
 
                     </button>
-                    <div class="text-center mt-4">
-
-                        <a asp-controller="Home"
-                           asp-action="Index"
-                           class="btn btn-primary btn-lg mt-3">
-
-                            <i class="fas fa-house me-2"></i>
-                            Return to Homepage
-
-                        </a>
-
-                    </div>
 
                 </form>
 
                 <div class="text-center mt-4">
 
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="btn btn-outline-secondary w-100">
+
+                        <i class="fas fa-house me-2"></i>
+
+                        Return to Homepage
+
+                    </a>
+
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+
                     Already have an account?
 
-                    <a asp-action="Login" class="fw-bold">
+                    <a asp-action="Login"
+                       class="fw-bold text-decoration-none">
 
                         Login
 
@@ -166,14 +282,59 @@
 
     </div>
 
+    Simple addition — after the success alert is dismissed, clear the input fields using their IDs.
+    Register.cshtml — update the success callback in the script block:
+    html
     <script>
-        $(document).ready(function () {
-            $("#register").click(function (e) {
-                alert("Registration Successful!\n\n" +
-                    "Full Name: " + $("#fullname").val() + "\n" +
-                    "Email: " + $("#email").val() + "\n" +
-                    "Username: " + $("#username").val()
-                );
+        $(document).ready(function ()
+        {
+            $("#register").click(function (e)
+            {
+                e.preventDefault();
+
+                var fullname = $("#fullname").val();
+                var email = $("#email").val();
+                var username = $("#username").val();
+                var password = $("#password").val();
+                var confirmPassword = $("#confirmPassword").val();
+
+                var insertPreview =
+                    "INSERT INTO Users (FullName, Email, Username, Password) VALUES (" +
+                    "'" + fullname + "', " +
+                    "'" + email + "', " +
+                    "'" + username + "', " +
+                    "'" + password + "');";
+
+                alert(insertPreview);
+
+                $.ajax({
+                    url: "/Account/Register",
+                    type: "POST",
+                    data: {
+                        fullname: fullname,
+                        email: email,
+                        username: username,
+                        password: password,
+                        confirmPassword: confirmPassword
+                    },
+                    success: function (response)
+                    {
+                        alert(response);
+
+                        if (response.indexOf("Registration Successful!") === 0)
+                        {
+                            $("#fullname").val("");
+                            $("#email").val("");
+                            $("#username").val("");
+                            $("#password").val("");
+                            $("#confirmPassword").val("");
+                        }
+                    },
+                    error: function ()
+                    {
+                        alert("Something went wrong. Please try again.");
+                    }
+                });
             });
         });
     </script>

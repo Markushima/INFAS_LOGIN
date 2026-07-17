@@ -57,27 +57,18 @@ namespace INFAS_CORTES_PO.Controllers
             return View();
         }
 
-
         [HttpPost]
-        public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
+        public string Register(string fullname, string email, string username, string password, string confirmPassword)
         {
             if (string.IsNullOrEmpty(fullname) || string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                ViewBag.Error = "All fields are required.";
-                return View();
+                return "All fields are required.";
             }
 
             if (password != confirmPassword)
             {
-                ViewBag.Error = "Passwords do not match.";
-                return View();
-            }
-
-            if (FakeDB.Users.Any(u => u.Username == username))
-            {
-                ViewBag.Error = "Username already exists.";
-                return View();
+                return "Passwords do not match.";
             }
 
             var newUser = new User
@@ -88,14 +79,19 @@ namespace INFAS_CORTES_PO.Controllers
                 Password = password
             };
 
+            if (!newUser.IsValidGmail())
+            {
+                return "Email must be a valid @gmail.com address.";
+            }
+
+            if (FakeDB.Users.Any(u => u.Username == username))
+            {
+                return "Username already exists.";
+            }
+
             FakeDB.Users.Add(newUser);
 
-            ViewBag.Success = true;
-            ViewBag.FullName = newUser.FullName;
-            ViewBag.Email = newUser.Email;
-            ViewBag.Username = newUser.Username;
-
-            return View();
+            return newUser.GetRegistrationSummary();
         }
 
         public IActionResult Logout()
