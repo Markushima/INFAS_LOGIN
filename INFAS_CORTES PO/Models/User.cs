@@ -7,12 +7,12 @@
         public string Username { get; set; }
         public string Password { get; set; }
 
-        public bool IsValidGmail()
-        {
-            return !string.IsNullOrWhiteSpace(Email) &&
-                   Email.Trim().EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase) &&
-                   Email.Trim().Length > "@gmail.com".Length;
-        }
+        //public bool IsValidGmail()
+        //{
+        //    return !string.IsNullOrWhiteSpace(Email) &&
+        //           Email.Trim().EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase) &&
+        //           Email.Trim().Length > "@gmail.com".Length;
+        //}
 
         public string _sql(string fullname, string email, string username, string password, string confirmPassword, string tb)
         {
@@ -20,13 +20,13 @@
             return _query;
         }
 
-        public string GetRegistrationSummary()
-        {
-            return "Registration Successful!\n\n" +
-                   "Full Name: " + FullName + "\n" +
-                   "Email: " + Email + "\n" +
-                   "Username: " + Username;
-        }
+        //public string GetRegistrationSummary()
+        //{
+        //    return "Registration Successful!\n\n" +
+        //           "Full Name: " + FullName + "\n" +
+        //           "Email: " + Email + "\n" +
+        //           "Username: " + Username;
+        //}
 
     }
 }
