@@ -14,6 +14,12 @@
                    Email.Trim().Length > "@gmail.com".Length;
         }
 
+        public string _sql(string fullname, string email, string username, string password, string confirmPassword, string tb)
+        {
+            string _query = $"INSERT INTO User" + tb + "VALUES(fullname, username, password, confirmPassword)";
+            return _query;
+        }
+
         public string GetRegistrationSummary()
         {
             return "Registration Successful!\n\n" +
@@ -21,5 +27,6 @@
                    "Email: " + Email + "\n" +
                    "Username: " + Username;
         }
+
     }
 }

@@ -298,15 +298,6 @@
                 var password = $("#password").val();
                 var confirmPassword = $("#confirmPassword").val();
 
-                var insertPreview =
-                    "INSERT INTO Users (FullName, Email, Username, Password) VALUES (" +
-                    "'" + fullname + "', " +
-                    "'" + email + "', " +
-                    "'" + username + "', " +
-                    "'" + password + "');";
-
-                alert(insertPreview);
-
                 $.ajax({
                     url: "/Account/Register",
                     type: "POST",

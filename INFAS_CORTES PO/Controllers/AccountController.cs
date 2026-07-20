@@ -1,11 +1,13 @@
 ﻿using INFAS_CORTES_PO.Models;
 using Microsoft.AspNetCore.Mvc;
+using INFAS_CORTES_PO.Models;
 
 namespace INFAS_CORTES_PO.Controllers
 {
-    
+   
     public class AccountController : Controller
     {
+        User user = new User();
         public IActionResult Login()
         {
 
@@ -18,7 +20,6 @@ namespace INFAS_CORTES_PO.Controllers
             return View();
         }
 
-        [HttpPost]
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
@@ -57,41 +58,11 @@ namespace INFAS_CORTES_PO.Controllers
             return View();
         }
 
+
         [HttpPost]
-        public string Register(string fullname, string email, string username, string password, string confirmPassword)
+        public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            if (string.IsNullOrEmpty(fullname) || string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-            {
-                return "All fields are required.";
-            }
-
-            if (password != confirmPassword)
-            {
-                return "Passwords do not match.";
-            }
-
-            var newUser = new User
-            {
-                FullName = fullname,
-                Email = email,
-                Username = username,
-                Password = password
-            };
-
-            if (!newUser.IsValidGmail())
-            {
-                return "Email must be a valid @gmail.com address.";
-            }
-
-            if (FakeDB.Users.Any(u => u.Username == username))
-            {
-                return "Username already exists.";
-            }
-
-            FakeDB.Users.Add(newUser);
-
-            return newUser.GetRegistrationSummary();
+            return Content(user._sql(fullname, email, username, password, confirmPassword, "tb"));
         }
 
         public IActionResult Logout()
