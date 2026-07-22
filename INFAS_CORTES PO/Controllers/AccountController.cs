@@ -66,7 +66,7 @@ namespace INFAS_CORTES_PO.Controllers
             string[] f = ["fullname" , "email" , "username" ,"password" , "confirmPassword", "Age", "ContactNumber" ];
             string[] d = ["John", "John@gmail.com", "User1", "123", "123", "23", "12345678809"];
 
-            string sql = _sql(f, d, "tb");
+            string sql = user._sql(f, d, "tb");
             return Content(sql);
         }
         public IActionResult Logout()
