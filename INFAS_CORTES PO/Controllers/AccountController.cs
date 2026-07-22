@@ -1,6 +1,7 @@
 ﻿using INFAS_CORTES_PO.Models;
+
 using Microsoft.AspNetCore.Mvc;
-using INFAS_CORTES_PO.Models;
+
 
 namespace INFAS_CORTES_PO.Controllers
 {
@@ -62,9 +63,12 @@ namespace INFAS_CORTES_PO.Controllers
         [HttpPost]
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            return Content(user._sql(fullname, email, username, password, confirmPassword, "tb"));
-        }
+            string[] f = ["fullname" , "email" , "username" ,"password" , "confirmPassword", "Age", "ContactNumber" ];
+            string[] d = ["John", "John@gmail.com", "User1", "123", "123", "23", "12345678809"];
 
+            string sql = _sql(f, d, "tb");
+            return Content(sql);
+        }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();

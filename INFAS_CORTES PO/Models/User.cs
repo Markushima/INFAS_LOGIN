@@ -14,11 +14,41 @@
         //           Email.Trim().Length > "@gmail.com".Length;
         //}
 
-        public string _sql(string fullname, string email, string username, string password, string confirmPassword, string tb)
+        //public string _sql(string fullname, string email, string username, string password, string confirmPassword, string tb)
+        //{
+        //    string _query = $"INSERT INTO User" + tb + "VALUES(fullname, username, password, confirmPassword)";
+        //    return _query;
+        //}
+
+        public string _sql(string[] fields, string[] values, string tb)
         {
-            string _query = $"INSERT INTO User" + tb + "VALUES(fullname, username, password, confirmPassword)";
+            string fieldList = "";
+            string valueList = "";
+
+            for(int i = 0; i < fields.Length; i++)
+            {
+                fieldList = fieldList + fields[i];
+                if(i!= fields.Length - 1)
+                {
+
+                    fields[i] = fieldList;
+                    
+                }
+            }
+            for (int i = 0; i < values.Length; i++)
+            {
+                valueList = valueList + values[i];
+                if (i != values.Length - 1)
+                {
+                    values[i] = values[i];
+                }
+            }
+
+            string _query = "INSERT INTO User" + tb + "(" + fieldList + ") VALUES (" + valueList + ")";
             return _query;
         }
+       
+
 
         //public string GetRegistrationSummary()
         //{
