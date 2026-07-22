@@ -27,25 +27,24 @@
 
             for(int i = 0; i < fields.Length; i++)
             {
-                fieldList = fieldList + fields[i];
+                fieldList += fields[i];
                 if(i!= fields.Length - 1)
                 {
 
-                    fields[i] = fieldList;
+                    fieldList += ", ";
                     
                 }
             }
             for (int i = 0; i < values.Length; i++)
             {
-                valueList = valueList + values[i];
+                valueList += "'" + values[i] + "'";
                 if (i != values.Length - 1)
                 {
-                    values[i] = values[i];
+                    valueList += ", ";
                 }
             }
 
-            string _query = "INSERT INTO User" + tb + "(" + fieldList + ") VALUES (" + valueList + ")";
-            return _query;
+            return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList})";
         }
        
 
