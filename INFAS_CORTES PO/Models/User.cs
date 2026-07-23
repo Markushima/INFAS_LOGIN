@@ -44,7 +44,7 @@
                 }
             }
 
-            return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList})";
+            return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList});";
         }
        
 
