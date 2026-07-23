@@ -25,19 +25,29 @@
             string fieldList = "";
             string valueList = "";
 
-            for(int i = 0; i < fields.Length; i++)
+            for (int i = 0; i < fields.Length; i++)
             {
                 fieldList += fields[i];
-                if(i!= fields.Length - 1)
-                {
 
+                if (i != fields.Length - 1)
+                {
                     fieldList += ", ";
-                    
                 }
             }
+
             for (int i = 0; i < values.Length; i++)
             {
-                valueList += "'" + values[i] + "'";
+                if (int.TryParse(values[i], out _) || double.TryParse(values[i], out _))
+                {
+                   
+                    valueList += values[i];
+                }
+                else
+                {
+                   
+                    valueList += $"'{values[i]}'";
+                }
+
                 if (i != values.Length - 1)
                 {
                     valueList += ", ";

@@ -64,8 +64,8 @@ namespace INFAS_CORTES_PO.Controllers
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
             string[] f = ["fullname" , "email" , "username" ,"password" , "confirmPassword", "Age", "ContactNumber" ];
-            string[] d = ["John", "John@gmail.com", "User1", "123", "123", "23", "12345678809"];
-            // string[] d = ["fullname", "email", "username", "password", "confirmPassword", "23", "12345678809"];
+            //string[] d = ["John", "John@gmail.com", "User1", "123", "123", "23", "12345678809"];
+            string[] d = [fullname, email, username, password, confirmPassword, "23", "12345678809"];
             string sql = user._sql(f, d, "tb");
             return Content(sql);
         }
