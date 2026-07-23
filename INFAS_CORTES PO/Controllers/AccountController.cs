@@ -63,11 +63,33 @@ namespace INFAS_CORTES_PO.Controllers
         [HttpPost]
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            string[] f = ["fullname" , "email" , "username" ,"password" , "confirmPassword", "Age", "ContactNumber" ];
-            //string[] d = ["John", "John@gmail.com", "User1", "123", "123", "23", "12345678809"];
-            string[] d = [fullname, email, username, password, confirmPassword, "23", "12345678809"];
+            string[] f =
+            {
+                "fullname", "email", "username", "password", "confirmPassword"
+            };
+
+            string[] d =
+            {
+               fullname, email, username, password, confirmPassword
+            };
+
             string sql = user._sql(f, d, "User");
-            return Content(sql);
+
+            FakeDB.Users.Add(new User
+            {
+                FullName = fullname,
+                Email = email,
+                Username = username,
+                Password = password
+            });
+
+            return Json(new
+            {
+                success = true,
+                message = "Registration Successful!",
+                sql = sql,
+                users = user.ViewAll()
+            });
         }
         public IActionResult Logout()
         {

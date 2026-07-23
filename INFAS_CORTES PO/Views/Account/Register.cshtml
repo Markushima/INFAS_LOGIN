@@ -282,46 +282,81 @@
 
     </div>
 
+    <table class="table table-bordered table-striped">
+
+        <thead>
+
+            <tr>
+
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Password</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody id="tblUsers">
+        </tbody>
+
+    </table>
+
     <script>
-        $(document).ready(function ()
+                $(document).ready(function ()
         {
             $("#register").click(function (e)
             {
                 e.preventDefault();
 
-                var fullname = $("#fullname").val();
-                var email = $("#email").val();
-                var username = $("#username").val();
-                var password = $("#password").val();
-                var confirmPassword = $("#confirmPassword").val();
-
                 $.ajax({
+
                     url: "/Account/Register",
+
                     type: "POST",
-                    data: {
-                        fullname: fullname,
-                        email: email,
-                        username: username,
-                        password: password,
-                        confirmPassword: confirmPassword
+
+                    data:
+                    {
+                        fullname: $("#fullname").val(),
+                        email: $("#email").val(),
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                        confirmPassword: $("#confirmPassword").val()
                     },
+
                     success: function (response)
                     {
-                        alert(response);
+                        alert(JSON.stringify(response, null, 2));
 
-                        if (response.indexOf("Registration Successful!") === 0)
+                        if (response.success)
                         {
                             $("#fullname").val("");
                             $("#email").val("");
                             $("#username").val("");
                             $("#password").val("");
                             $("#confirmPassword").val("");
+
+                            $("#tblUsers").html("");
+
+                            $.each(response.users, function (index, item)
+                            {
+                                $("#tblUsers").append(
+                                    "<tr>" +
+                                        "<td>" + item.fullName + "</td>" +
+                                        "<td>" + item.email + "</td>" +
+                                        "<td>" + item.username + "</td>" +
+                                        "<td>" + item.password + "</td>" +
+                                    "</tr>"
+                                );
+                            });
                         }
                     },
+
                     error: function ()
                     {
-                        alert("Something went wrong. Please try again.");
+                        alert("Something went wrong.");
                     }
+
                 });
             });
         });

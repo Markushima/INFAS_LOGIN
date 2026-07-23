@@ -7,18 +7,7 @@
         public string Username { get; set; }
         public string Password { get; set; }
 
-        //public bool IsValidGmail()
-        //{
-        //    return !string.IsNullOrWhiteSpace(Email) &&
-        //           Email.Trim().EndsWith("@gmail.com", StringComparison.OrdinalIgnoreCase) &&
-        //           Email.Trim().Length > "@gmail.com".Length;
-        //}
-
-        //public string _sql(string fullname, string email, string username, string password, string confirmPassword, string tb)
-        //{
-        //    string _query = $"INSERT INTO User" + tb + "VALUES(fullname, username, password, confirmPassword)";
-        //    return _query;
-        //}
+       
 
         public string _sql(string[] fields, string[] values, string tb)
         {
@@ -56,16 +45,13 @@
 
             return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList});";
         }
+
+        public List<User> ViewAll()
+        {
+            return FakeDB.Users;
+        }
+
        
-
-
-        //public string GetRegistrationSummary()
-        //{
-        //    return "Registration Successful!\n\n" +
-        //           "Full Name: " + FullName + "\n" +
-        //           "Email: " + Email + "\n" +
-        //           "Username: " + Username;
-        //}
 
     }
 }
