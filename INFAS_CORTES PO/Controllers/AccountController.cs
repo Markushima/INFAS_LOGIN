@@ -87,9 +87,15 @@ namespace INFAS_CORTES_PO.Controllers
             {
                 success = true,
                 message = "Registration Successful!",
-                sql = sql,
-                users = user.ViewAll()
+                //sql = sql,
+                users = user.ViewAll("Product")
             });
+        }
+
+        [HttpGet]
+        public IActionResult ViewAll(string table)
+        {
+            return Json(user.ViewAll(table));
         }
         public IActionResult Logout()
         {

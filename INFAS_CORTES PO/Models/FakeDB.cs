@@ -12,5 +12,23 @@
                 Password = "admin123"
             }
         };
+
+        public static List<Product> Products = new List<Product>()
+        {
+            new Product
+            {
+                ProductID = 1,
+                ProductName = "Keyboard",
+                Price = 1200,
+                Stocks = 10
+            },
+            new Product
+            {
+                ProductID = 2,
+                ProductName = "Mouse",
+                Price = 500,
+                Stocks = 20
+            }
+        };
     }
 }

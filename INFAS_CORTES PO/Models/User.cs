@@ -46,12 +46,24 @@
             return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList});";
         }
 
-        public List<User> ViewAll()
+        public object ViewAll(string table)
         {
-            return FakeDB.Users;
+            var field = typeof(FakeDB).GetField(table + "s");
+
+            if (field == null)
+            {
+                return new
+                {
+                    sql = $"SELECT * FROM {table}",
+                    data = new List<object>()
+                };
+            }
+
+            return new
+            {
+                sql = $"SELECT * FROM {table}",
+                data = field.GetValue(null)
+            };
         }
-
-       
-
     }
 }
