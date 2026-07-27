@@ -87,20 +87,74 @@ namespace INFAS_CORTES_PO.Controllers
             {
                 success = true,
                 message = "Registration Successful!",
-                //sql = sql,
-                users = user.ViewAll("Product")
+                sql = sql,
+                users = user.ViewAll("User")
             });
         }
 
-        [HttpGet]
-        public IActionResult ViewAll(string table)
+        [HttpPost]
+        public IActionResult Delete()
         {
-            return Json(user.ViewAll(table));
+            if (FakeDB.Users.Count > 0)
+            {
+                FakeDB.Users.RemoveAt(0);
+            }
+
+            return Json(new
+            {
+                success = true,
+                sql = user.Delete("User"),
+                data = FakeDB.Users
+            });
+        }
+
+        [HttpPost]
+        public IActionResult Update()
+        {
+            string[] fields =
+            {
+                "FullName",
+                "Email",
+                "Username",
+                "Password",
+                "Age",
+                "Address"
+            };
+
+            string[] values =
+            {
+                "Updated User",
+                "updated@gmail.com",
+                "updated",
+                "123456",
+                "23",
+                "basak"
+            };
+
+            user.UpdateObject(FakeDB.Users[0], fields, values);
+
+            return Json(new
+            {
+                success = true,
+                sql = user.Update("User", fields, values),
+                data = FakeDB.Users
+            });
+        }
+
+        public IActionResult ViewAll()
+        {
+            return Json(new
+            {
+                success = true,
+                sql = user.View("User"),
+                data = FakeDB.Users
+            });
         }
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
     }
 }

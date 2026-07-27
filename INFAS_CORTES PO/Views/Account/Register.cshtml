@@ -282,29 +282,50 @@
 
     </div>
 
-    <table class="table table-bordered table-striped">
+    <div>
 
-        <thead>
+        <table class="table table-bordered">
 
-            <tr>
+            <thead>
 
-                <th>Full Name</th>
-                <th>Email</th>
-                <th>Username</th>
-                <th>Password</th>
+                <tr>
 
-            </tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Action</th>
 
-        </thead>
+                </tr>
 
-        <tbody id="tblUsers">
-        </tbody>
+            </thead>
 
-    </table>
+            <tbody id="tblUsers">
+            </tbody>
+
+        </table>
+        <div class="mt-4 text-center">
+
+            <button type="button" id="btnView" class="btn btn-info">
+                View
+            </button>
+
+            <button type="button" id="btnUpdate" class="btn btn-warning">
+                Update
+            </button>
+
+            <button type="button" id="btnDelete" class="btn btn-danger">
+                Delete
+            </button>
+
+        </div>
+
+    </div>
 
     <script>
-                $(document).ready(function ()
+        $(document).ready(function ()
         {
+            // REGISTER
             $("#register").click(function (e)
             {
                 e.preventDefault();
@@ -336,19 +357,7 @@
                             $("#password").val("");
                             $("#confirmPassword").val("");
 
-                            $("#tblUsers").html("");
-
-                            $.each(response.users, function (index, item)
-                            {
-                                $("#tblUsers").append(
-                                    "<tr>" +
-                                        "<td>" + item.fullName + "</td>" +
-                                        "<td>" + item.email + "</td>" +
-                                        "<td>" + item.username + "</td>" +
-                                        "<td>" + item.password + "</td>" +
-                                    "</tr>"
-                                );
-                            });
+                            LoadUsers();
                         }
                     },
 
@@ -358,8 +367,122 @@
                     }
 
                 });
+
             });
+
+            // VIEW
+            $("#btnView").click(function ()
+            {
+                    $.ajax({
+
+            url: "/Account/ViewAll",
+
+            type: "GET",
+
+            success: function (response)
+            {
+                // Alert
+                alert(
+                    response.sql +
+                    "\n\n" +
+                    JSON.stringify(response.data, null, 2)
+                );
+
+                // Update table
+                $("#tblUsers").html("");
+
+                $.each(response.data, function (index, item)
+                {
+                    $("#tblUsers").append(
+                        "<tr>" +
+                            "<td>" + item.fullName + "</td>" +
+                            "<td>" + item.email + "</td>" +
+                            "<td>" + item.username + "</td>" +
+                            "<td>" + item.password + "</td>" +
+                        "</tr>"
+                    );
+                });
+            }
+
         });
+            });
+
+            // UPDATE
+            $("#btnUpdate").click(function ()
+            {
+                $.ajax({
+
+                    url: "/Account/Update",
+
+                    type: "POST",
+
+                    success: function (response)
+                    {
+                        alert(JSON.stringify(response, null, 2));
+
+                        LoadUsers();
+                    }
+
+                });
+            });
+
+            // DELETE
+            $("#btnDelete").click(function ()
+            {
+                $.ajax({
+
+                    url: "/Account/Delete",
+
+                    type: "POST",
+
+                    success: function (response)
+                    {
+                        alert(JSON.stringify(response, null, 2));
+
+                        LoadUsers();
+                    }
+
+                });
+            });
+
+        });
+
+        // LOAD USERS
+        function LoadUsers()
+        {
+            $.ajax({
+
+                url: "/Account/ViewAll",
+
+                type: "GET",
+
+                success: function (response)
+                {
+                    $("#tblUsers").html("");
+
+                    $.each(response.data, function (index, item)
+                    {
+                        $("#tblUsers").append(
+
+                            "<tr>" +
+
+                            "<td>" + item.fullName + "</td>" +
+
+                            "<td>" + item.email + "</td>" +
+
+                            "<td>" + item.username + "</td>" +
+
+                            "<td>" + item.password + "</td>" +
+
+                            "</tr>"
+
+                        );
+                    });
+
+                }
+
+            });
+        }
     </script>
 
 </body>

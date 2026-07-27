@@ -46,6 +46,43 @@
             return $"INSERT INTO {tb} ({fieldList}) VALUES ({valueList});";
         }
 
+        public string Update(string table, string[] fields, string[] values)
+        {
+            string query = $"UPDATE {table} SET ";
+
+            for (int i = 0; i < fields.Length; i++)
+            {
+                query += $"{fields[i]} = '{values[i]}'";
+
+                if (i != fields.Length - 1)
+                    query += ", ";
+            }
+
+            return query;
+        }
+
+        public void UpdateObject(object obj, string[] fields, string[] values)
+        {
+            for (int i = 0; i < fields.Length; i++)
+            {
+                var property = obj.GetType().GetProperty(fields[i]);
+
+                if (property != null && property.CanWrite)
+                {
+                    property.SetValue(obj, Convert.ChangeType(values[i], property.PropertyType));
+                }
+            }
+        }
+        public string Delete(string table)
+        {
+            return $"DELETE FROM {table}";
+        }
+
+        public string View(string table)
+        {
+            return $"SELECT * FROM {table}";
+        }
+
         public object ViewAll(string table)
         {
             var field = typeof(FakeDB).GetField(table + "s");
