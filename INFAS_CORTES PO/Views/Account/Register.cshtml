@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Register";
     Layout = null;
 }
@@ -15,16 +15,16 @@
 
     <link rel="icon" type="image/x-icon" href="~/assets/favicon.ico" />
 
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"></script&gt;
 
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&quot; rel="stylesheet" />
 
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic&quot; rel="stylesheet" />
 
     <link href="~/css/styles.css" rel="stylesheet" />
 
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script&gt;
 
     <style>
         <style >
@@ -282,58 +282,56 @@
 
     </div>
 
-    <div>
+   <div>
 
-        <table class="table table-bordered">
+    <table class="table table-bordered">
 
-            <thead>
+        <thead>
+            <tr>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-                <tr>
+        <tbody id="tblUsers">
+        </tbody>
 
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Username</th>
-                    <th>Password</th>
-                    <th>Action</th>
+        <tfoot>
+            <tr>
+                <td colspan="5" class="text-center">
+                    <button type="button" id="btnView" class="btn btn-info">
+                        View
+                    </button>
+                    <button type="button" id="btnCancelEdit" class="btn btn-secondary" style="display:none;">
+                        Cancel Edit
+                    </button>
+                </td>
+            </tr>
+        </tfoot>
 
-                </tr>
+    </table>
 
-            </thead>
-
-            <tbody id="tblUsers">
-            </tbody>
-
-        </table>
-        <div class="mt-4 text-center">
-
-            <button type="button" id="btnView" class="btn btn-info">
-                View
-            </button>
-
-            <button type="button" id="btnUpdate" class="btn btn-warning">
-                Update
-            </button>
-
-            <button type="button" id="btnDelete" class="btn btn-danger">
-                Delete
-            </button>
-
-        </div>
-
-    </div>
+</div>
 
     <script>
-        $(document).ready(function ()
-        {
-            // REGISTER
-            $("#register").click(function (e)
-            {
-                e.preventDefault();
+    var editingUsername = null; // tracks which user is currently being edited
 
+    $(document).ready(function ()
+    {
+        // CREATE / UPDATE (same button, behavior depends on editingUsername)
+        $("#register").click(function (e)
+        {
+            e.preventDefault();
+
+            if (editingUsername === null)
+            {
+                // ---- CREATE MODE ----
                 $.ajax({
 
                     url: "/Account/Register",
-
                     type: "POST",
 
                     data:
@@ -351,12 +349,7 @@
 
                         if (response.success)
                         {
-                            $("#fullname").val("");
-                            $("#email").val("");
-                            $("#username").val("");
-                            $("#password").val("");
-                            $("#confirmPassword").val("");
-
+                            ClearForm();
                             LoadUsers();
                         }
                     },
@@ -367,123 +360,172 @@
                     }
 
                 });
-
-            });
-
-            // VIEW
-            $("#btnView").click(function ()
+            }
+            else
             {
-                    $.ajax({
+                // ---- UPDATE MODE ----
+                $.ajax({
 
-            url: "/Account/ViewAll",
+                    url: "/Account/Update",
+                    type: "POST",
 
-            type: "GET",
+                    data:
+                    {
+                        originalUsername: editingUsername,
+                        fullname: $("#fullname").val(),
+                        email: $("#email").val(),
+                        username: $("#username").val(),
+                        password: $("#password").val(),
+                        confirmPassword: $("#confirmPassword").val()
+                    },
 
-            success: function (response)
-            {
-                // Alert
-                alert(
-                    response.sql +
-                    "\n\n" +
-                    JSON.stringify(response.data, null, 2)
-                );
+                    success: function (response)
+                    {
+                        alert(JSON.stringify(response, null, 2));
 
-                // Update table
-                $("#tblUsers").html("");
+                        if (response.success)
+                        {
+                            ExitEditMode();
+                            LoadUsers();
+                        }
+                    },
 
-                $.each(response.data, function (index, item)
-                {
-                    $("#tblUsers").append(
-                        "<tr>" +
-                            "<td>" + item.fullName + "</td>" +
-                            "<td>" + item.email + "</td>" +
-                            "<td>" + item.username + "</td>" +
-                            "<td>" + item.password + "</td>" +
-                        "</tr>"
-                    );
+                    error: function ()
+                    {
+                        alert("Something went wrong.");
+                    }
+
                 });
             }
 
         });
-            });
 
-            // UPDATE
-            $("#btnUpdate").click(function ()
-            {
-                $.ajax({
-
-                    url: "/Account/Update",
-
-                    type: "POST",
-
-                    success: function (response)
-                    {
-                        alert(JSON.stringify(response, null, 2));
-
-                        LoadUsers();
-                    }
-
-                });
-            });
-
-            // DELETE
-            $("#btnDelete").click(function ()
-            {
-                $.ajax({
-
-                    url: "/Account/Delete",
-
-                    type: "POST",
-
-                    success: function (response)
-                    {
-                        alert(JSON.stringify(response, null, 2));
-
-                        LoadUsers();
-                    }
-
-                });
-            });
-
+        // VIEW
+        $("#btnView").click(function ()
+        {
+            LoadUsers();
         });
 
-        // LOAD USERS
-        function LoadUsers()
+        // CANCEL
+        $("#btnCancelEdit").click(function ()
         {
+            ExitEditMode();
+        });
+
+        // ROW UPDATE
+        $(document).on("click", ".btnRowUpdate", function ()
+        {
+            var $row = $(this).closest("tr");
+
+            $("#fullname").val($row.data("fullname"));
+            $("#email").val($row.data("email"));
+            $("#username").val($row.data("username"));
+            $("#password").val($row.data("password"));
+            $("#confirmPassword").val($row.data("password"));
+
+            editingUsername = $row.data("username");
+
+            $("#register").html('<i class="fas fa-save me-2"></i> Save Changes');
+            $("#btnCancelEdit").show();
+
+            $('html, body').animate({ scrollTop: 0 }, 300);
+        });
+
+        // ROW DELETE (event delegation)
+        $(document).on("click", ".btnRowDelete", function ()
+        {
+            var $row = $(this).closest("tr");
+            var username = $row.data("username");
+
+            if (!confirm("Delete user \"" + username + "\"?")) return;
+
             $.ajax({
 
-                url: "/Account/ViewAll",
+                url: "/Account/Delete",
+                type: "POST",
 
-                type: "GET",
+                data: { username: username },
 
                 success: function (response)
                 {
-                    $("#tblUsers").html("");
+                    alert(JSON.stringify(response, null, 2));
 
-                    $.each(response.data, function (index, item)
+                    // if we were editing the row we just deleted, reset the form
+                    if (editingUsername === username)
                     {
-                        $("#tblUsers").append(
+                        ExitEditMode();
+                    }
 
-                            "<tr>" +
+                    LoadUsers();
+                },
 
-                            "<td>" + item.fullName + "</td>" +
-
-                            "<td>" + item.email + "</td>" +
-
-                            "<td>" + item.username + "</td>" +
-
-                            "<td>" + item.password + "</td>" +
-
-                            "</tr>"
-
-                        );
-                    });
-
+                error: function ()
+                {
+                    alert("Something went wrong.");
                 }
 
             });
-        }
-    </script>
+        });
+
+    });
+
+    // LOAD USERS
+    function LoadUsers()
+    {
+        $.ajax({
+
+            url: "/Account/ViewAll",
+            type: "GET",
+
+            success: function (response)
+            {
+                $("#tblUsers").html("");
+
+                $.each(response.data, function (index, item)
+                {
+                    var row =
+                        "<tr data-username='" + item.username + "' " +
+                            "data-fullname='" + item.fullName + "' " +
+                            "data-email='" + item.email + "' " +
+                            "data-password='" + item.password + "'>" +
+
+                            "<td>" + item.fullName + "</td>" +
+                            "<td>" + item.email + "</td>" +
+                            "<td>" + item.username + "</td>" +
+                            "<td>" + item.password + "</td>" +
+                            "<td>" +
+                                "<button type='button' class='btn btn-sm btn-warning btnRowUpdate'>Update</button> " +
+                                "<button type='button' class='btn btn-sm btn-danger btnRowDelete'>Delete</button>" +
+                            "</td>" +
+
+                        "</tr>";
+
+                    $("#tblUsers").append(row);
+                });
+            }
+
+        });
+    }
+
+    // CLEAR FORM (after create)
+    function ClearForm()
+    {
+        $("#fullname").val("");
+        $("#email").val("");
+        $("#username").val("");
+        $("#password").val("");
+        $("#confirmPassword").val("");
+    }
+
+    // EXIT EDIT MODE (after update, delete, or cancel)
+    function ExitEditMode()
+    {
+        editingUsername = null;
+        ClearForm();
+        $("#register").html('<i class="fas fa-user-plus me-2"></i> Create Account');
+        $("#btnCancelEdit").hide();
+    }
+</script>
 
 </body>
 
