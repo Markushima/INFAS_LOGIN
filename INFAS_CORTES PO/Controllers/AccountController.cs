@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace INFAS_CORTES_PO.Controllers
 {
-   
     public class AccountController : Controller
     {
         User user = new User();
+
         public IActionResult Login()
         {
-
             if (HttpContext.Session.GetString("User") != null)
             {
                 ViewBag.AlreadyLoggedIn = true;
@@ -24,7 +23,6 @@ namespace INFAS_CORTES_PO.Controllers
         [HttpPost]
         public IActionResult Login(string username, string password)
         {
-            // Restrictions
             if (string.IsNullOrWhiteSpace(username))
             {
                 ViewBag.Error = "Username is required.";
@@ -37,14 +35,14 @@ namespace INFAS_CORTES_PO.Controllers
                 return View();
             }
 
-            var user = FakeDB.Users.FirstOrDefault(x =>
+            var loggedInUser = FakeDB.Users.FirstOrDefault(x =>
                 x.Username == username &&
                 x.Password == password);
 
-            if (user != null)
+            if (loggedInUser != null)
             {
-                HttpContext.Session.SetString("User", user.Username);
-                HttpContext.Session.SetString("FullName", user.FullName);
+                HttpContext.Session.SetString("User", loggedInUser.Username);
+                HttpContext.Session.SetString("FullName", loggedInUser.FullName);
 
                 return RedirectToAction("Index", "Home");
             }
@@ -53,25 +51,16 @@ namespace INFAS_CORTES_PO.Controllers
             return View();
         }
 
-
         public IActionResult Register()
         {
             return View();
         }
 
-
         [HttpPost]
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            string[] f =
-            {
-                "fullname", "email", "username", "password", "confirmPassword"
-            };
-
-            string[] d =
-            {
-               fullname, email, username, password, confirmPassword
-            };
+            string[] f = { "fullname", "email", "username", "password", "confirmPassword" };
+            string[] d = { fullname, email, username, password, confirmPassword };
 
             string sql = user._sql(f, d, "User");
 
@@ -93,12 +82,20 @@ namespace INFAS_CORTES_PO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete()
+        public IActionResult Delete(string username)
         {
-            if (FakeDB.Users.Count > 0)
+            var target = FakeDB.Users.FirstOrDefault(u => u.Username == username);
+
+            if (target == null)
             {
-                FakeDB.Users.RemoveAt(0);
+                return Json(new
+                {
+                    success = false,
+                    message = "User not found."
+                });
             }
+
+            FakeDB.Users.Remove(target);
 
             return Json(new
             {
@@ -109,29 +106,22 @@ namespace INFAS_CORTES_PO.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update()
+        public IActionResult Update(string originalUsername, string fullname, string email, string username, string password)
         {
-            string[] fields =
-            {
-                "FullName",
-                "Email",
-                "Username",
-                "Password",
-                "Age",
-                "Address"
-            };
+            var target = FakeDB.Users.FirstOrDefault(u => u.Username == originalUsername);
 
-            string[] values =
+            if (target == null)
             {
-                "Updated User",
-                "updated@gmail.com",
-                "updated",
-                "123456",
-                "23",
-                "basak"
-            };
+                return Json(new
+                {
+                    success = false,
+                    message = "User not found."
+                });
+            } 
+            string[] fields = { "FullName", "Email", "Username", "Password" };
+            string[] values = { fullname, email, username, password };
 
-            user.UpdateObject(FakeDB.Users[0], fields, values);
+            user.UpdateObject(target, fields, values);
 
             return Json(new
             {
@@ -141,6 +131,7 @@ namespace INFAS_CORTES_PO.Controllers
             });
         }
 
+        [HttpGet]
         public IActionResult ViewAll()
         {
             return Json(new
@@ -150,11 +141,11 @@ namespace INFAS_CORTES_PO.Controllers
                 data = FakeDB.Users
             });
         }
+
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
-
     }
 }

@@ -302,7 +302,7 @@
                 <tr>
                     <td colspan="5" class="text-center">
                         <button type="button" id="btnView" class="btn btn-info">
-                            View
+                            View All
                         </button>
                         <button type="button" id="btnCancelEdit" class="btn btn-secondary" style="display:none;">
                             Cancel Edit
@@ -316,174 +316,194 @@
     </div>
 
     <script>
-        var editingUsername = null; // tracks which user is currently being edited
+            var editingUsername = null; // tracks which user is currently being edited
 
-        $(document).ready(function ()
-        {
-            // CREATE / UPDATE (same button, behavior depends on editingUsername)
-            $("#register").click(function (e)
-            {
-                e.preventDefault();
+            $(document).ready(function() {
+                LoadUsers(); // auto-load on page open
 
-                if (editingUsername === null)
-                {
-                    // ---- CREATE MODE ----
-                    $.ajax({
+                // CREATE 
+                $("#register").click(function(e) {
+                    e.preventDefault();
 
-                        url: "/Account/Register",
-                        type: "POST",
+                    if (editingUsername === null) {
+                    
+                        $.ajax({
 
-                        data:
-                        {
-                            fullname: $("#fullname").val(),
-                            email: $("#email").val(),
-                            username: $("#username").val(),
-                            password: $("#password").val(),
-                            confirmPassword: $("#confirmPassword").val()
-                        },
+                            url: "/Account/Register",
+                            type: "POST",
 
-                        success: function (response)
-                        {
-                            alert(JSON.stringify(response, null, 2));
-
-                            if (response.success)
+                            data:
                             {
-                                ClearForm();
-                                LoadUsers();
+                                fullname: $("#fullname").val(),
+                                email: $("#email").val(),
+                                username: $("#username").val(),
+                                password: $("#password").val(),
+                                confirmPassword: $("#confirmPassword").val()
+                            },
+
+                            success: function(response) {
+                                alert(JSON.stringify(response, null, 2));
+
+                                if (response.success) {
+                                    ClearForm();
+                                    LoadUsers();
+                                }
+                            },
+
+                            error: function() {
+                                alert("Something went wrong.");
                             }
-                        },
 
-                        error: function ()
-                        {
-                            alert("Something went wrong.");
-                        }
+                        });
+                    }
+                    else {
+                     
+                        $.ajax({
 
-                    });
-                }
-                else
-                {
-                    // ---- UPDATE MODE ----
-                    $.ajax({
+                            url: "/Account/Update",
+                            type: "POST",
 
-                        url: "/Account/Update",
-                        type: "POST",
-
-                        data:
-                        {
-                            originalUsername: editingUsername,
-                            fullname: $("#fullname").val(),
-                            email: $("#email").val(),
-                            username: $("#username").val(),
-                            password: $("#password").val(),
-                            confirmPassword: $("#confirmPassword").val()
-                        },
-
-                        success: function (response)
-                        {
-                            alert(JSON.stringify(response, null, 2));
-
-                            if (response.success)
+                            data:
                             {
-                                ExitEditMode();
-                                LoadUsers();
+                                originalUsername: editingUsername,
+                                fullname: $("#fullname").val(),
+                                email: $("#email").val(),
+                                username: $("#username").val(),
+                                password: $("#password").val()
+                            },
+
+                            success: function(response) {
+                                alert(JSON.stringify(response, null, 2));
+
+                                if (response.success) {
+                                    ExitEditMode();
+                                    LoadUsers();
+                                }
+                            },
+
+                            error: function() {
+                                alert("Something went wrong.");
                             }
-                        },
 
-                        error: function ()
-                        {
-                            alert("Something went wrong.");
-                        }
-
-                    });
-                }
-
-            });
-
-            // VIEW
-            $("#btnView").click(function ()
-            {
-                LoadUsers();
-            });
-
-            // CANCEL EDIT
-            $("#btnCancelEdit").click(function ()
-            {
-                ExitEditMode();
-            });
-
-            // ROW UPDATE (event delegation, since rows are added dynamically)
-            $(document).on("click", ".btnRowUpdate", function ()
-            {
-                var $row = $(this).closest("tr");
-
-                $("#fullname").val($row.data("fullname"));
-                $("#email").val($row.data("email"));
-                $("#username").val($row.data("username"));
-                $("#password").val($row.data("password"));
-                $("#confirmPassword").val($row.data("password"));
-
-                editingUsername = $row.data("username");
-
-                $("#register").html('<i class="fas fa-save me-2"></i> Save Changes');
-                $("#btnCancelEdit").show();
-
-                $('html, body').animate({ scrollTop: 0 }, 300);
-            });
-
-            // ROW DELETE (event delegation)
-            $(document).on("click", ".btnRowDelete", function ()
-            {
-                var $row = $(this).closest("tr");
-                var username = $row.data("username");
-
-                if (!confirm("Delete user \"" + username + "\"?")) return;
-
-                $.ajax({
-
-                    url: "/Account/Delete",
-                    type: "POST",
-
-                    data: { username: username },
-
-                    success: function (response)
-                    {
-                        alert(JSON.stringify(response, null, 2));
-
-                        // if we were editing the row we just deleted, reset the form
-                        if (editingUsername === username)
-                        {
-                            ExitEditMode();
-                        }
-
-                        LoadUsers();
-                    },
-
-                    error: function ()
-                    {
-                        alert("Something went wrong.");
+                        });
                     }
 
                 });
+
+                // VIEW ALL 
+                $("#btnView").click(function() {
+                    LoadUsers();
+                });
+
+                // CANCEL EDIT
+                $("#btnCancelEdit").click(function() {
+                    ExitEditMode();
+                });
+
+                // ROW VIEW 
+                $(document).on("click", ".btnRowView", function ()
+                {
+                    var $row = $(this).closest("tr");
+
+                    $.ajax({
+
+                        url: "/Account/ViewAll",
+                        type: "GET",
+
+                        success: function (response)
+                        {
+                            alert(
+                                response.sql + "\n\n" +
+                                "Full Name: " + $row.data("fullname") + "\n" +
+                                "Email: " + $row.data("email") + "\n" +
+                                "Username: " + $row.data("username") + "\n" +
+                                "Password: " + $row.data("password")
+                            );
+                        },
+
+                        error: function ()
+                        {
+                            alert("Something went wrong.");
+                        }
+
+                    });
+                });
+
+                // ROW UPDATE
+                $(document).on("click", ".btnRowUpdate", function() {
+                    var $row = $(this).closest("tr");
+
+                    $("#fullname").val($row.data("fullname"));
+                    $("#email").val($row.data("email"));
+                    $("#username").val($row.data("username"));
+                    $("#password").val($row.data("password"));
+                    $("#confirmPassword").val($row.data("password"));
+
+                    editingUsername = $row.data("username");
+
+                    $("#register").html('<i class="fas fa-save me-2"></i> Save Changes');
+                    $("#btnCancelEdit").show();
+
+                    $('html, body').animate({ scrollTop: 0 }, 300);
+                });
+
+                // ROW DELETE
+                $(document).on("click", ".btnRowDelete", function ()
+                {
+                    var $row = $(this).closest("tr");
+                    var username = $row.data("username");
+
+                    if (!confirm("Delete user " + username) return;
+
+                    $.ajax({
+
+                        url: "/Account/Delete",
+                        type: "POST",
+
+                        data: { username: username },
+
+                        success: function (response)
+                        {
+                            if (response.success)
+                            {
+                                alert(response.sql);
+                            }
+                            else
+                            {
+                                alert(response.message);
+                            }
+
+                            if (editingUsername === username)
+                            {
+                                ExitEditMode();
+                            }
+
+                            LoadUsers();
+                        },
+
+                        error: function ()
+                        {
+                            alert("Something went wrong.");
+                        }
+
+                    });
+                });
+
             });
 
-        });
+            // LOAD USERS
+            function LoadUsers() {
+                $.ajax({
 
-        // LOAD USERS
-        function LoadUsers()
-        {
-            $.ajax({
+                    url: "/Account/ViewAll",
+                    type: "GET",
 
-                url: "/Account/ViewAll",
-                type: "GET",
+                    success: function(response) {
+                        $("#tblUsers").html("");
 
-                success: function (response)
-                {
-                    $("#tblUsers").html("");
-
-                    $.each(response.data, function (index, item)
-                    {
-                        var row =
-                            "<tr data-username='" + item.username + "' " +
+                        $.each(response.data, function(index, item) {
+                            var row =
+                                "<tr data-username='" + item.username + "' " +
                                 "data-fullname='" + item.fullName + "' " +
                                 "data-email='" + item.email + "' " +
                                 "data-password='" + item.password + "'>" +
@@ -493,37 +513,40 @@
                                 "<td>" + item.username + "</td>" +
                                 "<td>" + item.password + "</td>" +
                                 "<td>" +
-                                    "<button type='button' class='btn btn-sm btn-warning btnRowUpdate'>Update</button> " +
-                                    "<button type='button' class='btn btn-sm btn-danger btnRowDelete'>Delete</button>" +
+                                "<button type='button' class='btn btn-sm btn-info btnRowView'>View</button> " +
+                                "<button type='button' class='btn btn-sm btn-warning btnRowUpdate'>Update</button> " +
+                                "<button type='button' class='btn btn-sm btn-danger btnRowDelete'>Delete</button>" +
                                 "</td>" +
 
-                            "</tr>";
+                                "</tr>";
 
-                        $("#tblUsers").append(row);
-                    });
-                }
+                            $("#tblUsers").append(row);
+                        });
+                    },
 
-            });
-        }
+                    error: function() {
+                        alert("Failed to load users.");
+                    }
 
-        // CLEAR FORM (after create)
-        function ClearForm()
-        {
-            $("#fullname").val("");
-            $("#email").val("");
-            $("#username").val("");
-            $("#password").val("");
-            $("#confirmPassword").val("");
-        }
+                });
+            }
 
-        // EXIT EDIT MODE (after update, delete, or cancel)
-        function ExitEditMode()
-        {
-            editingUsername = null;
-            ClearForm();
-            $("#register").html('<i class="fas fa-user-plus me-2"></i> Create Account');
-            $("#btnCancelEdit").hide();
-        }
+            // CLEAR FORM 
+            function ClearForm() {
+                $("#fullname").val("");
+                $("#email").val("");
+                $("#username").val("");
+                $("#password").val("");
+                $("#confirmPassword").val("");
+            }
+
+            // EXIT EDIT MODE 
+            function ExitEditMode() {
+                editingUsername = null;
+                ClearForm();
+                $("#register").html('<i class="fas fa-user-plus me-2"></i> Create Account');
+                $("#btnCancelEdit").hide();
+            }
     </script>
 
 </body>
