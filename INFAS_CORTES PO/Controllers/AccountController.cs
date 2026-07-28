@@ -100,7 +100,7 @@ namespace INFAS_CORTES_PO.Controllers
             return Json(new
             {
                 success = true,
-                sql = user.Delete("User"),
+                sql = user.Delete("User", $"username = '{username}'"),
                 data = FakeDB.Users
             });
         }

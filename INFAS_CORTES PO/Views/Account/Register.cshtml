@@ -316,20 +316,17 @@
     <script>
             var editingUsername = null; // tracks which user is currently being edited
 
-            $(document).ready(function() {
-                LoadUsers(); // auto-load on page open
+                $(document).ready(function() {
+                 LoadUsers(); // auto-load on page open
 
-                // CREATE 
+                // CREATE
                 $("#register").click(function(e) {
                     e.preventDefault();
-
                     if (editingUsername === null) {
-                    
-                        $.ajax({
 
+                        $.ajax({
                             url: "/Account/Register",
                             type: "POST",
-
                             data:
                             {
                                 fullname: $("#fullname").val(),
@@ -338,29 +335,24 @@
                                 password: $("#password").val(),
                                 confirmPassword: $("#confirmPassword").val()
                             },
-
                             success: function(response) {
-                                alert(JSON.stringify(response, null, 2));
+                                alert(JSON.stringify(response, null, 2)); 
 
                                 if (response.success) {
                                     ClearForm();
-                                    LoadUsers();
+                                    LoadUsers(); 
                                 }
                             },
-
                             error: function() {
                                 alert("Something went wrong.");
                             }
-
                         });
                     }
                     else {
-                     
-                        $.ajax({
 
+                        $.ajax({
                             url: "/Account/Update",
                             type: "POST",
-
                             data:
                             {
                                 originalUsername: editingUsername,
@@ -369,23 +361,18 @@
                                 username: $("#username").val(),
                                 password: $("#password").val()
                             },
-
                             success: function(response) {
                                 alert(JSON.stringify(response, null, 2));
-
                                 if (response.success) {
                                     ExitEditMode();
                                     LoadUsers();
                                 }
                             },
-
                             error: function() {
                                 alert("Something went wrong.");
                             }
-
                         });
                     }
-
                 });
 
                 // VIEW ALL 

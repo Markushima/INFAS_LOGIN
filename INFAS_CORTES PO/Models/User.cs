@@ -73,9 +73,9 @@
                 }
             }
         }
-        public string Delete(string table)
+        public string Delete(string table, string condition)
         {
-            return $"DELETE FROM {table}";
+            return $"DELETE FROM {table} WHERE {condition}";
         }
 
         public string View(string table)
@@ -91,14 +91,14 @@
             {
                 return new
                 {
-                    sql = $"SELECT * FROM {table}",
+                    sql = this.View("table"),
                     data = new List<object>()
                 };
             }
 
             return new
             {
-                sql = $"SELECT * FROM {table}",
+                sql = this.View("table"),
                 data = field.GetValue(null)
             };
         }
