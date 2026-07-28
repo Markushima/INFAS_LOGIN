@@ -118,8 +118,8 @@ namespace INFAS_CORTES_PO.Controllers
                     message = "User not found."
                 });
             } 
-            string[] fields = { "FullName", "Email", "Username", "Password" };
-            string[] values = { fullname, email, username, password };
+            string[] fields = { "FullName", "Email", "Username", "Password", "Age", "Phone" };
+            string[] values = { fullname, email, username, password, "23", "091231235512" };
 
             user.UpdateObject(target, fields, values);
 

@@ -443,18 +443,13 @@
                     var $row = $(this).closest("tr");
                     var username = $row.data("username");
 
-                    if (!confirm("Delete user \"" + username + "\"")) return;
-
                     $.ajax({
-
                         url: "/Account/Delete",
                         type: "POST",
-
                         data: { username: username },
-
                         success: function (response)
                         {
-                            alert(JSON.stringify(response, null, 2));
+                            alert(response.sql);
 
                             if (editingUsername === username)
                             {
@@ -463,12 +458,10 @@
 
                             LoadUsers();
                         },
-
                         error: function ()
                         {
                             alert("Something went wrong.");
                         }
-
                     });
                 });
 
