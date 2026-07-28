@@ -301,9 +301,7 @@
             <tfoot>
                 <tr>
                     <td colspan="5" class="text-center">
-                        <button type="button" id="btnView" class="btn btn-info">
-                            View All
-                        </button>
+                       
                         <button type="button" id="btnCancelEdit" class="btn btn-secondary" style="display:none;">
                             Cancel Edit
                         </button>
@@ -400,11 +398,9 @@
                     ExitEditMode();
                 });
 
-                // ROW VIEW 
+                // ROW VIEW
                 $(document).on("click", ".btnRowView", function ()
                 {
-                    var $row = $(this).closest("tr");
-
                     $.ajax({
 
                         url: "/Account/ViewAll",
@@ -412,13 +408,7 @@
 
                         success: function (response)
                         {
-                            alert(
-                                response.sql + "\n\n" +
-                                "Full Name: " + $row.data("fullname") + "\n" +
-                                "Email: " + $row.data("email") + "\n" +
-                                "Username: " + $row.data("username") + "\n" +
-                                "Password: " + $row.data("password")
-                            );
+                            alert(JSON.stringify(response, null, 2));
                         },
 
                         error: function ()
@@ -453,7 +443,7 @@
                     var $row = $(this).closest("tr");
                     var username = $row.data("username");
 
-                    if (!confirm("Delete user " + username) return;
+                    if (!confirm("Delete user \"" + username + "\"")) return;
 
                     $.ajax({
 
@@ -464,14 +454,7 @@
 
                         success: function (response)
                         {
-                            if (response.success)
-                            {
-                                alert(response.sql);
-                            }
-                            else
-                            {
-                                alert(response.message);
-                            }
+                            alert(JSON.stringify(response, null, 2));
 
                             if (editingUsername === username)
                             {
