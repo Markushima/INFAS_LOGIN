@@ -317,7 +317,6 @@
             var editingUsername = null; // tracks which user is currently being edited
 
                 $(document).ready(function() {
-                 LoadUsers(); // auto-load on page open
 
                 // CREATE
                 $("#register").click(function(e) {
@@ -454,45 +453,6 @@
 
             });
 
-            // LOAD USERS
-            function LoadUsers() {
-                $.ajax({
-
-                    url: "/Account/ViewAll",
-                    type: "GET",
-
-                    success: function(response) {
-                        $("#tblUsers").html("");
-
-                        $.each(response.data, function(index, item) {
-                            var row =
-                                "<tr data-username='" + item.username + "' " +
-                                "data-fullname='" + item.fullName + "' " +
-                                "data-email='" + item.email + "' " +
-                                "data-password='" + item.password + "'>" +
-
-                                "<td>" + item.fullName + "</td>" +
-                                "<td>" + item.email + "</td>" +
-                                "<td>" + item.username + "</td>" +
-                                "<td>" + item.password + "</td>" +
-                                "<td>" +
-                                "<button type='button' class='btn btn-sm btn-info btnRowView'>View</button> " +
-                                "<button type='button' class='btn btn-sm btn-warning btnRowUpdate'>Update</button> " +
-                                "<button type='button' class='btn btn-sm btn-danger btnRowDelete'>Delete</button>" +
-                                "</td>" +
-
-                                "</tr>";
-
-                            $("#tblUsers").append(row);
-                        });
-                    },
-
-                    error: function() {
-                        alert("Failed to load users.");
-                    }
-
-                });
-            }
 
             // CLEAR FORM 
             function ClearForm() {

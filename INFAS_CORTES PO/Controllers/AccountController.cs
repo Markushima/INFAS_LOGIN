@@ -1,13 +1,16 @@
 ﻿using INFAS_CORTES_PO.Models;
-
 using Microsoft.AspNetCore.Mvc;
-
 
 namespace INFAS_CORTES_PO.Controllers
 {
     public class AccountController : Controller
     {
-        User user = new User();
+        private readonly AppDbContext _context;
+
+        public AccountController(AppDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Login()
         {
@@ -59,88 +62,71 @@ namespace INFAS_CORTES_PO.Controllers
         [HttpPost]
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            string[] f = { "fullname", "email", "username", "password", "confirmPassword" };
-            string[] d = { fullname, email, username, password, confirmPassword };
+            if (string.IsNullOrWhiteSpace(fullname))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Full Name is required."
+                });
+            }
 
-            string sql = user._sql(f, d, "User");
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Email is required."
+                });
+            }
 
-            FakeDB.Users.Add(new User
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Username is required."
+                });
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Password is required."
+                });
+            }
+
+            if (password != confirmPassword)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Passwords do not match."
+                });
+            }
+
+            User newUser = new User
             {
                 FullName = fullname,
                 Email = email,
                 Username = username,
-                Password = password
-            });
+                Password = password,
+                ConfirmPassword = confirmPassword
+            };
+
+            _context.Users.Add(newUser);
+
+            _context.SaveChanges();
 
             return Json(new
             {
                 success = true,
-                message = "Registration Successful!",
-                sql = sql,
-                users = user.ViewAll("User")
+                message = "Registration Successful!"
             });
         }
 
-        [HttpPost]
-        public IActionResult Delete(string username)
-        {
-            var target = FakeDB.Users.FirstOrDefault(u => u.Username == username);
-
-            if (target == null)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "User not found."
-                });
-            }
-
-            FakeDB.Users.Remove(target);
-
-            return Json(new
-            {
-                success = true,
-                sql = user.Delete("User", $"username = '{username}'"),
-                data = FakeDB.Users
-            });
-        }
-
-        [HttpPost]
-        public IActionResult Update(string originalUsername, string fullname, string email, string username, string password)
-        {
-            var target = FakeDB.Users.FirstOrDefault(u => u.Username == originalUsername);
-
-            if (target == null)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "User not found."
-                });
-            } 
-            string[] fields = { "FullName", "Email", "Username", "Password", "Age", "Phone" };
-            string[] values = { fullname, email, username, password, "23", "091231235512" };
-
-            user.UpdateObject(target, fields, values);
-
-            return Json(new
-            {
-                success = true,
-                sql = user.Update("User", fields, values),
-                data = FakeDB.Users
-            });
-        }
-
-        [HttpGet]
-        public IActionResult ViewAll()
-        {
-            return Json(new
-            {
-                success = true,
-                sql = user.View("User"),
-                data = FakeDB.Users
-            });
-        }
 
         public IActionResult Logout()
         {
