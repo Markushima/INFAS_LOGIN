@@ -116,15 +116,26 @@ namespace INFAS_CORTES_PO.Controllers
                 ConfirmPassword = confirmPassword
             };
 
-            _context.Users.Add(newUser);
-
-            _context.SaveChanges();
-
-            return Json(new
+            try
             {
-                success = true,
-                message = "Registration Successful!"
-            });
+                _context.Users.Add(newUser);
+
+                _context.SaveChanges();
+
+                return Json(new
+                {
+                    success = true,
+                    message = "Registration Successful!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.InnerException?.Message ?? ex.Message
+                });
+            }
         }
 
 
