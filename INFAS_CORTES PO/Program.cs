@@ -22,13 +22,20 @@ builder.Services.AddSession(options =>
 var app = builder.Build();
 
 
+// CREATE DATABASE AND TABLES IF THEY DON'T EXIST
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated();
+}
+
 
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-//app.UseDefaultFiles();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -38,7 +45,7 @@ app.UseSession();
 
 app.UseAuthorization();
 
-app.MapControllers();  
+app.MapControllers();
 
 app.MapControllerRoute(
     name: "login",
@@ -55,4 +62,3 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
-
