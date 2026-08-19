@@ -38,14 +38,7 @@ namespace INFAS_CORTES_PO.Controllers
 
         public IActionResult Index()
         {
-            var username = HttpContext.Session.GetString("User");
-
-            if (username != null)
-            {
-                var user = FakeDB.Users.FirstOrDefault(u => u.Username == username);
-                ViewBag.FullName = user?.FullName;
-            }
-
+            
             return View();
         }
 

@@ -332,22 +332,19 @@
                     },
 
                     success: function (response) {
-
                         if (response.success) {
+                           
+                            alert(response.sql);
 
-                            alert(response.message);
-
+                           
                             $("#fullname").val("");
                             $("#email").val("");
                             $("#username").val("");
                             $("#password").val("");
                             $("#confirmPassword").val("");
-
                         }
                         else {
-
                             alert(response.message);
-
                         }
                     },
 

@@ -3,15 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")
+        builder.Configuration.GetConnectionString("ConnectionString")
     ));
 
-// Add Session
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
@@ -22,11 +20,22 @@ builder.Services.AddSession(options =>
 var app = builder.Build();
 
 
-// CREATE DATABASE AND TABLES IF THEY DON'T EXIST
+// CREATE DATABASE
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    db.Database.EnsureCreated();
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        db.Database.EnsureCreated();
+
+        Console.WriteLine("DATABASE CREATED SUCCESSFULLY!");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("DATABASE CREATION FAILED!");
+        Console.WriteLine(ex.Message);
+    }
 }
 
 

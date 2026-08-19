@@ -1,15 +1,19 @@
 ﻿using INFAS_CORTES_PO.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace INFAS_CORTES_PO.Controllers
 {
     public class AccountController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly string _connectionString;
 
-        public AccountController(AppDbContext context)
+        public AccountController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _connectionString = configuration.GetConnectionString("ConnectionString")
+                                ?? throw new InvalidOperationException("Connection string 'ConnectionString' not found.");
         }
 
         public IActionResult Login()
@@ -38,18 +42,6 @@ namespace INFAS_CORTES_PO.Controllers
                 return View();
             }
 
-            var loggedInUser = FakeDB.Users.FirstOrDefault(x =>
-                x.Username == username &&
-                x.Password == password);
-
-            if (loggedInUser != null)
-            {
-                HttpContext.Session.SetString("User", loggedInUser.Username);
-                HttpContext.Session.SetString("FullName", loggedInUser.FullName);
-
-                return RedirectToAction("Index", "Home");
-            }
-
             ViewBag.Error = "Invalid Username or Password.";
             return View();
         }
@@ -62,70 +54,56 @@ namespace INFAS_CORTES_PO.Controllers
         [HttpPost]
         public IActionResult Register(string fullname, string email, string username, string password, string confirmPassword)
         {
-            if (string.IsNullOrWhiteSpace(fullname))
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Full Name is required."
-                });
-            }
-
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Email is required."
-                });
-            }
-
-            if (string.IsNullOrWhiteSpace(username))
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Username is required."
-                });
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Password is required."
-                });
-            }
 
             if (password != confirmPassword)
             {
-                return Json(new
-                {
-                    success = false,
-                    message = "Passwords do not match."
-                });
+                return Json(new { success = false, message = "Passwords do not match." });
             }
-
-            User newUser = new User
-            {
-                FullName = fullname,
-                Email = email,
-                Username = username,
-                Password = password,
-                ConfirmPassword = confirmPassword
-            };
 
             try
             {
-                _context.Users.Add(newUser);
+                User user = new User
+                {
+                    FullName = fullname,
+                    Email = email,
+                    Username = username,
+                    Password = password,
+                    ConfirmPassword = confirmPassword
+                };
 
-                _context.SaveChanges();
+                
+                //string sql = user._sql(
+                //    new string[] { "FullName", "Email", "Username", "Password", "ConfirmPassword" },
+                //    new string[] { user.FullName, user.Email, user.Username, user.Password, user.ConfirmPassword },
+                //    "Users"
+                //);
+
+                string[] fields = { "FullName", "Email", "Username", "Password", "ConfirmPassword" };
+                string[] values = { user.FullName, user.Email, user.Username, user.Password, user.ConfirmPassword };
+
+                string sqlParameterized = user._sql(fields, values, "Users");
+
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand(sqlParameterized, connection))
+                    {
+                        command.Parameters.AddWithValue("@FullName", user.FullName ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Username", user.Username ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@Password", user.Password ?? (object)DBNull.Value);
+                        command.Parameters.AddWithValue("@ConfirmPassword", user.ConfirmPassword ?? (object)DBNull.Value);
+
+                        command.ExecuteNonQuery();
+                    }
+                }
 
                 return Json(new
                 {
                     success = true,
-                    message = "Registration Successful!"
+                    message = "Registration Successful!",
+                    sql = sqlParameterized
                 });
             }
             catch (Exception ex)
@@ -138,7 +116,6 @@ namespace INFAS_CORTES_PO.Controllers
             }
         }
 
-
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
@@ -146,3 +123,4 @@ namespace INFAS_CORTES_PO.Controllers
         }
     }
 }
+
